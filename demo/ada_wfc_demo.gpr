@@ -1,0 +1,57 @@
+
+with "../ada_wfc.gpr";
+with "imago/imago.gpr";
+
+project Ada_WFC_Demo is
+
+    for Create_Missing_Dirs use "True";
+    
+    for Source_Dirs use ("src");
+    for Main use ("main.adb");
+
+    type Build_Mode is ("debug", "release");
+    Mode : Build_Mode := external ("mode", "debug");
+
+    for Object_Dir use "obj/" & Mode;
+    for Exec_Dir   use "bin/" & Mode;
+
+    package Builder is
+        for Default_Switches ("Ada") use ("-s");
+    end Builder;
+
+    package Binder is
+        for Default_Switches ("Ada") use ("-E");
+    end Binder;
+
+    package Compiler is
+
+        Extra_Switches := ();
+
+        case Mode is
+        when "release" =>
+            Extra_Switches :=
+                ( "-O3"    -- fast
+                , "-gnatp" -- furious (don't check runtime stuff)
+                -- , "-gnatn" -- inline stuff (broken for some reason?)
+                );
+        when "debug" =>
+            Extra_Switches :=
+                ( "-g"      -- debug symbols
+                , "-O0"     -- NOT fast
+                , "-gnateE" -- better exception messages
+                , "-gnateG" -- produce expanded source code
+                , "-gnata"  -- enable assertions and debug pragmas
+                , "-gnatwa" -- warnings
+                );
+        end case;
+
+        for Default_Switches ("Ada") use
+            ("-gnat12", "-gnatW8") & Extra_Switches;
+
+    end Compiler;
+
+    package Linker is
+        for Default_Switches ("Ada") use ("-lIL", "-lILU", "-lILUT", "-lGL");
+    end Linker;
+
+end Ada_WFC_Demo;

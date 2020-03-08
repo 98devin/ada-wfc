@@ -1,0 +1,57 @@
+
+project Ada_WFC is
+
+    Name := "ada_wfc";
+
+    for Create_Missing_Dirs use "True";
+    
+    for Source_Dirs use ("src");
+    for Ignore_Source_Sub_Dirs use (".git", ".vscode");
+
+    type Build_Mode is ("debug", "release");
+    Mode : Build_Mode := external ("mode", "debug");
+
+    type Library_Mode is ("static", "dynamic");
+    Lib_Mode : Library_Mode := external ("LIBRARY_TYPE", "dynamic");
+
+    for Object_Dir   use "obj/" & Mode;
+    for Library_Dir  use "lib/" & Mode;
+    for Library_Name use Name;
+    for Library_Kind use Lib_Mode;
+
+    package Builder is
+        for Default_Switches ("Ada") use ("-s");
+    end Builder;
+
+    package Binder is
+        for Default_Switches ("Ada") use ("-E");
+    end Binder;
+
+    package Compiler is
+
+        Extra_Switches := ();
+
+        case Mode is
+        when "release" =>
+            Extra_Switches :=
+                ( "-O3"    -- fast
+                , "-gnatp" -- furious (don't check runtime stuff)
+                -- , "-gnatn" -- inline stuff (broken for some reason?)
+                );
+        when "debug" =>
+            Extra_Switches :=
+                ( "-g"      -- debug symbols
+                , "-O0"     -- NOT fast
+                , "-gnateE" -- better exception messages
+                , "-gnateG" -- produce expanded source code
+                , "-gnata"  -- enable assertions and debug pragmas
+                , "-gnatwa" -- warnings
+                );
+        end case;
+
+        for Default_Switches ("Ada") use
+            ("-gnat12", "-gnatW8") & Extra_Switches;
+
+    end Compiler;
+
+end Ada_WFC;
