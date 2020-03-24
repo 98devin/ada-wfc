@@ -1,31 +1,41 @@
 
 
-with Imago.IL;
+with Imago; with Imago.IL;
 use  Imago;
 
-with Wave_Function_Collapse;
+with WFC;
 
+with GNAT.Command_Line;
+use  GNAT.Command_Line;
 
 package Util is
   
-  type Image_Color is (R, G, B)
+  Argument_Error  : exception;
+  Execution_Error : exception;
+
+  type Image_Color is (R, G, B);
 
   type Image_Pixel is
-    array (Image_Color) of IL.Byte;
+    array (Image_Color) of IL.UByte
+    with Pack;
 
   type Image_Matrix is
-    array (Natural range <>, Natural range <>) of Image_Pixel;
+    array (Natural range <>, Natural range <>) of Image_Pixel
+    with Pack;
 
-  package Image_WFC is new
-    Wave_Function_Collapse(Image_Pixel, Image_Matrix);
-
+  package Image_WFC is new WFC(Image_Pixel, Image_Matrix);
+  -- The generic instantiation we will use
+  -- when provided an image at the command line.
 
   type Character_Matrix is
     array (Natural range <>, Natural range <>) of Character;
 
-  package Character_WFC is new
-    Wave_Function_Collapse(Character, Character_Matrix);
+  package Character_WFC is new WFC(Character, Character_Matrix);
+  -- The generic instantiation we will use
+  -- when instead provided a simple text file.
 
-  procedure Load_Input_Image (Switch, Filename : String);
+  procedure Define_CLI_Switches (Config : in out Command_Line_Configuration);
+
+  procedure Process_Command_Arguments;
 
 end;

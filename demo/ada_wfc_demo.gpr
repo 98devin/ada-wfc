@@ -1,6 +1,8 @@
 
+with "gnatcoll.gpr";
+
+with "./imago/imago.gpr";
 with "../ada_wfc.gpr";
-with "imago/imago.gpr";
 
 project Ada_WFC_Demo is
 

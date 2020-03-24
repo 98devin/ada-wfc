@@ -36,6 +36,7 @@ project Ada_WFC is
             Extra_Switches :=
                 ( "-O3"    -- fast
                 , "-gnatp" -- furious (don't check runtime stuff)
+                , "-gnatB" -- assume valid values always
                 -- , "-gnatn" -- inline stuff (broken for some reason?)
                 );
         when "debug" =>
@@ -46,6 +47,7 @@ project Ada_WFC is
                 , "-gnateG" -- produce expanded source code
                 , "-gnata"  -- enable assertions and debug pragmas
                 , "-gnatwa" -- warnings
+                , "-gnatVa" -- check for validity of values
                 );
         end case;
 
