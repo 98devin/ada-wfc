@@ -11,6 +11,8 @@ The basic interface and code may still improve, but they do implement the algori
 ### requirements
 
 `ada-wfc` itself can be built as an Ada library with `gprbuild`, with no external dependencies.
+Ada 2012 may be required for certain features; I have not tested older version/compiler support
+other than FSF GNAT 9.2.0.
 
 The demo program requires that `libIL`/`libILU` be available
 for the image processing features, which can be provided by `libdevil` (or some similar name) library on most linux systems; consult your package manager. It is also built with `gprbuild`.
